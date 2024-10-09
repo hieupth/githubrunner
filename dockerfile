@@ -64,3 +64,11 @@ COPY --from=build /usr/local/lib/docker/cli-plugins/docker-buildx /usr/local/lib
 RUN install -o root -g root -m 755 docker/* /usr/bin/ && rm -rf docker
 
 USER runner
+
+COPY ./scripts/app_token.sh /app_token.sh
+COPY ./scripts/token.sh /token.sh
+COPY ./scripts/entrypoint.sh /entrypoint.sh
+
+RUN ./config.sh remove
+ENTRYPOINT ["bash", "/entrypoint.sh"]
+CMD ["./bin/Runner.Listener", "run", "--startuptype", "service"]
