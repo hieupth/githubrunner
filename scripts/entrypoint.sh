@@ -6,10 +6,12 @@ export PATH=${PATH}:/actions-runner
 
 # Un-export these, so that they must be passed explicitly to the environment of
 # any command that needs them.  This may help prevent leaks.
-export -n ACCESS_TOKEN
-export -n RUNNER_TOKEN
-export -n APP_ID
-export -n APP_PRIVATE_KEY
+# export -n ACCESS_TOKEN
+# export -n RUNNER_TOKEN
+# export -n APP_ID
+# export -n APP_PRIVATE_KEY
+
+set -a && source /run/secrets/config && set +a
 
 trap_with_arg() {
     func="$1" ; shift

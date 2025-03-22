@@ -6,6 +6,7 @@ on:
     branches:
       - 'main'
     paths:
+      - '.github/workflows/build.yml'
       - 'dockerfile'
 
 jobs:
@@ -36,5 +37,5 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ${{secrets.DOCKERHUB_USERNAME}}/githubrunner
-          build-args:
-            RUNNER_VERSION=2.320.0
+          build-args: |
+            RUNNER_VERSION=2.323.0
