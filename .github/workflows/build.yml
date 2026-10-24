@@ -1,0 +1,44 @@
+name: Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: 'Additional apt packages to install (space-separated)'
+        required: false
+        default: ''
+  push:
+    branches: ['main']
+    paths:
+      - ".github/workflows/build.yml"
+      - "dockerfile"
+      - "scripts/*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # `tag` is the published tag, `base` the myoung34/github-runner base tag.
+        # `latest` tracks the runner image's default Ubuntu.
+        include:
+          - tag: latest
+            base: latest
+          - tag: resolute
+            base: ubuntu-resolute
+          - tag: noble
+            base: ubuntu-noble
+    steps:
+      - name: Build and push
+        uses: hieupth/gha-docker/build@1ab142fc109fc43357975bb0c14c567297747d7a # v0.1
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          image: docker.io/${{ vars.DOCKERHUB_USERNAME }}/githubrunner:${{ matrix.tag }}
+          platforms: linux/amd64,linux/arm64
+          dockerfile: dockerfile
+          build_args: |
+            UBUNTU_VERSION=${{ matrix.base }}
+            PACKAGES=${{ inputs.packages }}
+          cache: false
